@@ -57,8 +57,8 @@ public class Main {
       ref.fields = ofNullable(args.get("fields")).filter(v -> v instanceof List).map(v -> (List) v).orElse(emptyList());
       //photo params
       ref.photoReference = (String) args.get("photoreference");
-      ref.maxheight = (Integer) args.get("maxheight");
-      ref.maxwidth = (Integer) args.get("maxwidth");
+      ref.maxheight =  ofNullable(args.get("maxheight")).map(v->((Number)v).intValue()).orElse(null);
+      ref.maxwidth = ofNullable(args.get("maxwidth")).map(v->((Number)v).intValue()).orElse(null);
     });
     var ctx = new GeoApiContext.Builder().apiKey(apiKey).build();
     switch (ref.action) {
