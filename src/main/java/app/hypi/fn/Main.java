@@ -51,7 +51,7 @@ public class Main {
           ref.nextPageToken = (String) args.get("nextpagetoken");
           ref.radius =  args.get("radius");
           ref.keyword =  args.get("keyword");
-          ref.openNow =  args.get("openNow");
+          ref.openNow =  args.get("opennow");
           ref.rankBy =  args.get("rankby");
           ref.type =  args.get("type");
           ref.minPrice =  args.get("minprice");
