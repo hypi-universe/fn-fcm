@@ -103,11 +103,11 @@ public class Main {
         return req.await();
       }
       case "photos" -> {
-        requireNonNull(ref.placeId, "placeid parameter is required but is not provided");
+        requireNonNull(ref.photoReference, "photoreference parameter is required but is not provided");
         if (ref.maxheight == null && ref.maxwidth == null) {
           throw new IllegalArgumentException("At least one of maxheight OR maxwidth parameters and neither has been provided");
         }
-        var req = PlacesApi.photo(ctx, ref.placeId);
+        var req = PlacesApi.photo(ctx, ref.photoReference);
         ofNullable(ref.maxheight).ifPresent(req::maxHeight);
         ofNullable(ref.maxwidth).ifPresent(req::maxWidth);
         return req.await();
