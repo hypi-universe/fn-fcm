@@ -9,7 +9,7 @@ If you don't have these types, add them, if you do, modify them. For example
 
 ```graphql
 type Query {
-    findGooglePlaces(radius: Int!, lat: Float!, long: Float!): Json @fn(name: "google-places", version: "v1.1", src: "01E8TQXPF01QR7QYFZA038DM2P")
+    findGooglePlaces(action: String, radius: Int!, lat: Float!, long: Float!): Json @fn(name: "google-places", version: "v1.1", src: "01E8TQXPF01QR7QYFZA038DM2P", env: ["GOOGLE_PLACES_KEY"])
 }
 ```
 
@@ -17,6 +17,9 @@ This example shows the required parameters for this function. Any of the argumen
 The name `findGooglePlaces` is arbitrary, you can name it anything you like.
 The return type is `Json` but you can create a custom type and return that instead. 
 Note that the structure of the custom type must match the structure returned from this function.
+
+`GOOGLE_PLACES_KEY` env is required. You create an environment variable in your Hypi app with this name and provide the value on each instance that uses this function.
+`action` - see arguments below
 
 ## Env keys
 
