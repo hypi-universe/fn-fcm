@@ -18,6 +18,9 @@ The name `sendNotifications` is arbitrary, you can name it anything you like.
 The return type is `Json` but you can create a custom type and return that instead. 
 Note that the structure of the custom type must match the structure returned from this function.
 
+Note, `src` is set to `hypi` in the example above. Leave this. Hypi has published this function and made it public.
+You can use it as shown in the example above without building/publishing (which will use your serverless allowance).
+
 `FCM_SVC_ACC_JSON` env is required. You create an environment variable in your Hypi app with this name and provide the value on each instance that uses this function.
 `action` - must be one of `send`,`send-multiple`,`send-to-topic`,`subscribe`,`unsubscribe`
 
@@ -50,6 +53,8 @@ their [Message](https://firebase.google.com/docs/reference/fcm/rest/v1/projects.
 |               | message                 | The firebase [Message](https://firebase.google.com/docs/reference/fcm/rest/v1/projects.messages#resource:-message) to send to the topic                                |
 
 # Build & Release
+
+NOTE: This is NOT necessary for this function. Hypi publishes the `fcm` function, use `src: "hypi"` as shown in the usage above.
 
 1. Make sure you've logged into the Hypi container register by running `docker login hcr.hypi.app -u hypi` and enter a token from your Hypi account as the password
 2. Build the JAR and copy the dependencies `mvn clean package`
