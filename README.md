@@ -32,22 +32,22 @@ These are all defined by [FCM](https://firebase.google.com/docs/cloud-messaging/
 their [Message](https://firebase.google.com/docs/reference/fcm/rest/v1/projects.messages#resource:-message) type is central to notifications.
 <!-- Generated with https://www.tablesgenerator.com/markdown_tables -->
 
-| Action        | Parameters              | Description                                                                                                                                                                   |
-|---------------|-------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| send          |                         | Allows a notification to be sent to 1 device where the token is stored in Hypi                                                                                                |
-|               | token_src_type: String  | The name of a GraphQL type in the schema where your app stores device notification tokens                                                                                     |
-|               | token_src_field: String | The name of a field within the type given by token_src_type                                                                                                                   |
-|               | token_src_id: String    | The ID of the type given by token_src_type                                                                                                                                    |
-|               | message                 | The firebase [Message] ( https://firebase.google.com/docs/reference/fcm/rest/v1/projects.messages#resource:-message ) to send to the token obtained from getting token_src_id |
-| subscribe     |                         | Allows notifications to be sent to 1 or more devices where the tokens are stored in Firebase                                                                                  |
-|               | topic                   | The topic that the given token should be subscribed to                                                                                                                        |
-|               | token                   | The device token. In the future, any notification sent to the topic will be received by the device                                                                            |
-| unsubscribe   |                         | Unsubscribe a user/device from a given topic                                                                                                                                  |
-|               | topic                   | The topic that the given token should be subscribed to                                                                                                                        |
-|               | token                   | The device token. In the future, any notification sent to the topic will be received by the device                                                                            |
-| send-to-topic |                         | Send a push notification to this topic. All devices previously subscribed to the topic will receive a notification                                                            |
-|               | topic                   | The name of the topic to send the notification to                                                                                                                             |
-|               | message                 | The firebase [Message] ( https://firebase.google.com/docs/reference/fcm/rest/v1/projects.messages#resource:-message ) to send to the topic                                    |
+| Action        | Parameters              | Description                                                                                                                                                            |
+|---------------|-------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| send          |                         | Allows a notification to be sent to 1 device where the token is stored in Hypi                                                                                         |
+|               | token_src_type: String  | The name of a GraphQL type in the schema where your app stores device notification tokens                                                                              |
+|               | token_src_field: String | The name of a field within the type given by token_src_type                                                                                                            |
+|               | token_src_id: String    | The ID of the type given by token_src_type                                                                                                                             |
+|               | message                 | The firebase [Message](https://firebase.google.com/docs/reference/fcm/rest/v1/projects.messages#resource:-message) to send to the token  from getting token_src_id     |
+| subscribe     |                         | Allows notifications to be sent to 1 or more devices where the tokens are stored in Firebase                                                                           |
+|               | topic                   | The topic that the given token should be subscribed to                                                                                                                 |
+|               | token                   | The device token. In the future, any notification sent to the topic will be received by the device                                                                     |
+| unsubscribe   |                         | Unsubscribe a user/device from a given topic                                                                                                                           |
+|               | topic                   | The topic that the given token should be subscribed to                                                                                                                 |
+|               | token                   | The device token. In the future, any notification sent to the topic will be received by the device                                                                     |
+| send-to-topic |                         | Send a push notification to this topic. All devices previously subscribed to the topic will receive a notification                                                     |
+|               | topic                   | The name of the topic to send the notification to                                                                                                                      |
+|               | message                 | The firebase [Message](https://firebase.google.com/docs/reference/fcm/rest/v1/projects.messages#resource:-message) to send to the topic                                |
 
 # Build & Release
 
