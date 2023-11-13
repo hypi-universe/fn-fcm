@@ -7,9 +7,72 @@ This function sends push notifications to Web, Android, iOS, Windows and Mac dev
 You can use it by by adding a function to your Hypi `Query` or `Mutation` types under the schema.
 If you don't have these types, add them, if you do, modify them. For example
 
+In your Hypi app schema, you can use the function like by adding one or more methods
 ```graphql
-type Query {
-    sendNotification(action: String = "send-to-topic", topic: String, message: Json): Json @fn(name: "fcm", version: "v1", src: "hypi", env: ["FCM_SVC_ACC_JSON"])
+type Mutation {
+  subscribeFCM(
+    action: String = "subscribe",
+    token: String!,
+    topic: String!
+  ): Json @fn(name: "fcm", version: "v1", src: "hypi", env: ["FCM_SVC_ACC_JSON"])
+
+  unsubscribeFCM(
+    action: String = "unsubscribe",
+    token: String!,
+    topic: String!
+  ): Json @fn(name: "fcm", version: "v1", src: "hypi", env: ["FCM_SVC_ACC_JSON"])
+
+  sendFCM(
+    action: String = "send",
+    token: String!,
+    message: Json!
+  ): Json @fn(name: "fcm", version: "v1", src: "hypi", env: ["FCM_SVC_ACC_JSON"])
+
+  sendToTopicFCM(
+    action: String = "send-to-topic",
+    topic: String!,
+    message: Json!
+  ): Json @fn(name: "fcm", version: "v1", src: "hypi", env: ["FCM_SVC_ACC_JSON"])
+}
+```
+
+In the app, you can call the function using one of the below examples - replace any info
+
+```graphql
+mutation {
+# {
+#   sendFCM(
+#     message: {
+#       data: { new_msg_id: "msg1" }
+#       notification: {
+#         title: "Hello world"
+#         body: "Hello Damion!"
+#         image: "https://images.pexels.com/photos/1629781/pexels-photo-1629781.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"
+#       }
+#     }
+#     token: "<A FCM token>"
+#   )
+# }
+
+# {
+#   subscribeFCM(topic: "courtney", token: "<An FCM token>")
+# }
+
+{
+  sendToTopicFCM(
+    #For example the ID of the room messages are being sent to
+    topic:"courtney",
+    message: {
+      #Any custom object/data you want to pass to the app e.g. the ID of type it should fetch
+      data: {new_msg_id: "msg1"},
+      notification: {
+        title: "Hello world",
+        body: "Hello here",
+        image: "https://images.pexels.com/photos/1629781/pexels-photo-1629781.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"
+      }
+    }
+  )
+}
 }
 ```
 
