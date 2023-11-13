@@ -15,6 +15,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
 import java.util.function.Consumer;
 
@@ -28,6 +29,7 @@ public class Main {
   private static final Logger log = LoggerFactory.getLogger(Main.class);
   private static final String actions = "[send,send-multiple,send-to-topic,subscribe,unsubscribe]";
   private static final HypiHttpClient http = new HypiHttpClient(false);
+  private static final Map<String, FirebaseApp> instances = new ConcurrentHashMap<>();
 
   public Object invoke(Map<String, Object> input) throws Exception {
     String svcAccStr = getStrInput(input, "env", "FCM_SVC_ACC_JSON", "Missing environment variable FCM_SVC_ACC_JSON");
@@ -41,20 +43,30 @@ public class Main {
       throw new IllegalStateException("Cant initialize GoogleCredentials from stream" + " , " + e.getMessage());
     }
     FirebaseOptions options = FirebaseOptions.builder().setCredentials(credentials).build();
-    var app = FirebaseApp.initializeApp(options, "hypi-fcm-fn");
+    var app = instances.computeIfAbsent("hypi-fcm-fn" + svcAccStr.hashCode(), k -> FirebaseApp.initializeApp(options, k));
     var fcm = FirebaseMessaging.getInstance(app);
     switch (action) {
       case "send" -> {
         return sendToSingleDevice(
             fcm,
-            (Map<String, Object>) ofNullable(input.get("message")).orElseThrow(() -> new IllegalArgumentException("Require message object not provided")),
-            findToken(
-                getStrInput(input, "env", "hypi.token", "Required Hypi token not provided"),
-                getStrInput(input, "env", "hypi.domain", "Required Hypi token not provided"),
-                getStrInput(input, "args", "token_src_type", "Required String argument token_src_type"),
-                getStrInput(input, "args", "token_src_field", "Required String argument token_src_field"),
-                getStrInput(input, "args", "token_src_id", "Required String argument token_src_id")
-            )
+            (Map<String, Object>) ofNullable(input.get("args"))
+                .map(v -> ((Map) v).get("message"))
+                .map(v -> v instanceof String ? JSON.parse((String) v) : v)
+                .orElseThrow(() -> new IllegalArgumentException("Require message object not provided")),
+            //If the client has a token then allow them to send to it
+            ofNullable(getStrInput(input, "args", "token", null)).orElseGet(() -> {
+              try {
+                return findToken(
+                    getStrInput(input, "env", "hypi.token", "Required Hypi token not provided"),
+                    getStrInput(input, "env", "hypi.domain", "Required Hypi token not provided"),
+                    getStrInput(input, "args", "token_src_type", "Required String argument token_src_type"),
+                    getStrInput(input, "args", "token_src_field", "Required String argument token_src_field"),
+                    getStrInput(input, "args", "token_src_id", "Required String argument token_src_id")
+                );
+              } catch (Exception e) {
+                throw new RuntimeException(e);
+              }
+            })
         );
       }
       case "subscribe" -> {
@@ -74,7 +86,10 @@ public class Main {
       case "send-to-topic" -> {
         return sendToTopic(
             fcm,
-            (Map<String, Object>) ofNullable(input.get("message")).orElseThrow(() -> new IllegalArgumentException("Require message object not provided")),
+            (Map<String, Object>) ofNullable(input.get("args"))
+                .map(v -> ((Map) v).get("message"))
+                .map(v -> v instanceof String ? JSON.parse((String) v) : v)
+                .orElseThrow(() -> new IllegalArgumentException("Required message object not provided")),
             getStrInput(input, "args", "topic", "Required String argument topic")
         );
       }
@@ -103,7 +118,7 @@ public class Main {
   }
 
   private static String getStrInput(Map<String, Object> input, String args, String arg, String errMsg) {
-    return ofNullable(input.get(args)).filter(v -> v instanceof Map).map(v -> {
+    var found = ofNullable(input.get(args)).filter(v -> v instanceof Map).map(v -> {
       if (arg.contains(".")) {
         for (String k : arg.split("\\.")) {
           if (v instanceof Map) v = ((Map<?, ?>) v).get(k);
@@ -113,7 +128,10 @@ public class Main {
       } else {
         return ((Map) v).get(arg);
       }
-    }).filter(v -> v instanceof String).map(v -> (String) v).orElseThrow(() -> new IllegalArgumentException(errMsg));
+    }).filter(v -> v instanceof String).map(v -> (String) v);
+    if (found.isPresent()) return found.get();
+    if (errMsg != null) throw new IllegalArgumentException(errMsg);
+    return null;
   }
 
   /**
