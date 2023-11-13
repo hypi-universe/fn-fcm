@@ -1,6 +1,6 @@
-# Google Places
+# Google Firebase Cloud Notifications (FCM)
 
-This function sends push notifications to Web, Android, iOS, Windows and Mac devices.
+This function sends push notifications to Web, Android, iOS, Windows and Mac devices via FCM.
 
 ## Usage
 
